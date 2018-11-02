@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/css/ol.css" type="text/css" />
+    <link rel="stylesheet" href="css/road_data.css" />
+    <link rel="stylesheet" href="css/map.css" />
+    <link rel="icon" href="src/traffic-light-64.png" type="image/x-icon" />    
+    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js"></script>
+    <script type="module" src="js/RoadData.js"></script>
+    <meta charset="UTF-8" />
+    <title>道路資訊</title>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="info">
+        <div class="insert_submit">
+          <input type="button" onclick="addMarker()" value="Add Marker">
+          <input type="button" onclick="addNode()" value="Add Node">
+        </div>
+        <div class="latlng">
+          <table>
+            <tr><td>Latitude:</td><td id="lat"></td></tr>
+            <tr><td>Longitude:</td><td id="lng"></td></tr>
+          </table>
+        </div>
+        <div class="insert_light">
+          <input type="text" id="road1" placeholder="Road1" value="" />
+          <input type="text" id="road2" placeholder="Road2" value="" />
+        </div>
+        <div class="insert_node">
+          <input type="text" id="nid" placeholder="N_id" value="" />
+          <input type="text" id="isCross" placeholder="isCross" value="" />
+        </div>
+      </div>
+      <div id="map"></div>
+    </div>
+  </body>
+</html>
