@@ -16,7 +16,7 @@ class Emergency {
 
     // AJAX
     self.xmlHttp = window.XMLHttpRequest ? new XMLHttpRequest() : ActiveXObject("Microsoft.XMLHTTP");
-    self.xmlHttp.onreadystatechange = function() {
+    self.xmlHttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
         self.emergencyArr = JSON.parse(this.responseText);
         if (self.emergencyArr.length != 0) {
@@ -39,7 +39,7 @@ class Emergency {
   getLastPosition() {
     return ol.proj.fromLonLat([parseFloat(this.emergencyArr[0].Longitude), parseFloat(this.emergencyArr[0].Latitude)]);
   }
-    
+
   // 更新 Emergency 位置
   updateEmergency() {
     let self = this;
@@ -64,9 +64,9 @@ class Emergency {
         let t = elapsed / 1000;
         let lon = t * parseFloat(self.emergencyArr[0].Longitude) + (1 - t) * self.startPosition[0];
         let lat = t * parseFloat(self.emergencyArr[0].Latitude) + (1 - t) * self.startPosition[1];
-      
+
         self.overlay.setPosition(ol.proj.fromLonLat([lon, lat]));
-        
+
         // 遞迴
         self.requestID = requestAnimationFrame(updateOverlay);
       }

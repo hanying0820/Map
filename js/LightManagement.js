@@ -9,29 +9,40 @@ class LightManagement {
 
     // AJAX
     let xmlHttp = window.XMLHttpRequest ? new XMLHttpRequest() : ActiveXObject("Microsoft.XMLHTTP");
-    xmlHttp.onreadystatechange = function() {
+
+    xmlHttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
-        self.lights = JSON.parse(this.responseText);
-        self.initLights();
+        let delta = parseFloat(this.responseText);
+
+        xmlHttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            self.lights = JSON.parse(this.responseText);
+            self.initLights(delta);
+          }
+        };
+
+        xmlHttp.open('GET', 'php/getLights.php', true);
+        xmlHttp.send();
       }
     };
 
-    xmlHttp.open('GET', 'php/getLights.php', true);
+    xmlHttp.open('GET', '../getTime.php?time=' + new Date().getTime(), true);
     xmlHttp.send();
   }
 
   // 初始化所有紅綠燈
-  initLights() {
+  initLights(delta) {
     let rightNow = new Date();
+    rightNow.setTime(rightNow.getTime() + delta);
     let light_ovl_s = [];
-    this.trafficLights = [];    
+    this.trafficLights = [];
     for (const light of this.lights) {
       if (light.periods.length == 0) {
         continue;
       }
 
       // light's div
-      let light_div = document.createElement('div');      
+      let light_div = document.createElement('div');
 
       this.trafficLights.push(new TrafficLight(light_div, rightNow, light.periods));
       switch (this.trafficLights[this.trafficLights.length - 1].getStatus()) {
@@ -80,7 +91,7 @@ class LightManagement {
       light_div.onclick = () => {
         infoWindow_ovl.setPosition(infoWindow_ovl.getPosition() == undefined ? light_ovl.getPosition() : undefined);
       };
-    }    
+    }
 
     for (const light_ovl of light_ovl_s) {
       this.map.addOverlay(light_ovl);
@@ -91,7 +102,7 @@ class LightManagement {
   tick() {
     for (let trafficLight of this.trafficLights) {
       trafficLight.tick();
-      
+
       switch (trafficLight.getStatus()) {
         case 'Red':
           trafficLight.div.style.backgroundImage = 'url(src/red.png)';
