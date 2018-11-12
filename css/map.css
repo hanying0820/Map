@@ -68,8 +68,7 @@ body {
   width: 32px;
   cursor: default;
 }
-#event {    
-  background-image: url(../src/blackMarker.png);
+#event {
   background-size: contain;
   height: 32px;
   width: 32px;
