@@ -17,7 +17,7 @@ import EventManagement from './EventManagement.js';
       zoom: 17
     })
   });
-  
+
   // 緊急事件
   new Emergency(map);
 

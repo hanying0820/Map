@@ -1,10 +1,10 @@
 // 字串轉時間
 function parseSecond(time) {
   let split = time.split(':');
-      
+
   return parseInt(split[0] * 3600) + parseInt(split[1] * 60) + parseInt(split[2]);
 }
-    
+
 // 紅綠燈
 class TrafficLight {
   constructor(div, now, periods) {
@@ -88,7 +88,7 @@ class TrafficLight {
     else if (--this.countDown == 0) {
       if (++this.current == this.status.length) {
         this.current = 0;
-      }      
+      }
       this.countDown = this.lightSeconds[this.current];
     }
   }
