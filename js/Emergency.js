@@ -1,8 +1,20 @@
+class EmergencyControl extends ol.control.Control {
+  constructor(listener) {
+    let button = document.createElement('button');
+    button.innerHTML = 'E';
+    button.addEventListener('click', listener);
+
+    let element = document.createElement('div');
+    element.className = 'emengency-control ol-control';
+    element.appendChild(button);
+
+    super({ element: element });
+  }
+}
+
 // 緊急事件
 class Emergency {
   constructor(map) {
-    let self = this;
-
     let emergency_div = document.createElement('div');
     emergency_div.id = 'emergency';
 
@@ -12,32 +24,30 @@ class Emergency {
       stopEvent: true
     });
 
-    map.addOverlay(this.overlay);
+    this.map = map;
 
-    // AJAX
-    self.xmlHttp = window.XMLHttpRequest ? new XMLHttpRequest() : ActiveXObject("Microsoft.XMLHTTP");
-    self.xmlHttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        self.emergencyArr = JSON.parse(this.responseText);
-        if (self.emergencyArr.length != 0) {
-          self.updateEmergency();
-        }
-        else {
-          self.finishEmergency();
-        }
-      }
-    };
+    // overlay
+    this.map.addOverlay(this.overlay);
 
-    // 開始持續更新 Emergency 狀況
-    setInterval(() => {
-      this.xmlHttp.open('GET', '../getLocation.php', true);
-      this.xmlHttp.send();
-    }, 1000);
+    // control
+    this.map.addControl(this.control = new EmergencyControl(this.moveToEmergency.bind(this)));
+  }
+
+  setEmergency(arr) {
+    this.emergencyArr = arr;
+    if (this.emergencyArr.length != 0) {
+      this.updateEmergency();
+    } else {
+      this.finishEmergency();
+    }
   }
 
   // 取得最新的位置
   getLastPosition() {
-    return ol.proj.fromLonLat([parseFloat(this.emergencyArr[0].Longitude), parseFloat(this.emergencyArr[0].Latitude)]);
+    return ol.proj.fromLonLat([
+      parseFloat(this.emergencyArr[0].Longitude),
+      parseFloat(this.emergencyArr[0].Latitude)
+    ]);
   }
 
   // 更新 Emergency 位置
@@ -47,6 +57,7 @@ class Emergency {
     if (self.overlay.getPosition() == undefined) {
       if (self.initialPosition == null) {
         self.initialPosition = self.getLastPosition();
+        self.control.setMap(self.map);
         return;
       } else {
         self.overlay.setPosition(self.initialPosition);
@@ -80,6 +91,15 @@ class Emergency {
     cancelAnimationFrame(this.requestID);
     this.requestID = null;
     this.overlay.setPosition(undefined);
+    this.control.setMap(null);
+  }
+
+  // 移動地圖到 Emergency 上
+  moveToEmergency() {
+    this.map.getView().animate({
+      center: this.overlay.getPosition(),
+      duration: 1000
+    });
   }
 }
 

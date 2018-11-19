@@ -61,6 +61,13 @@ body {
 .ol-popup-closer:after {
   content: "✖";
 }
+.emengency-control {
+  top: 65px;
+  left: .5em;
+}
+.ol-touch .emengency-control {
+  top: 80px;
+}
 #emergency {
   background-image: url(../src/siren.png);
   background-size: contain;
