@@ -17,14 +17,7 @@ $table_names = ['location', 'demo_location'];
 foreach ($table_names as $name) {
     $query = "SELECT * FROM $name";
     $result = mysqli_query($link, $query);
-
-    $array = array();
-    if ($result && mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            array_push($array, $row);
-        }
-    }
-    $json[$name] = $array;
+    $json[$name] = mysqli_fetch_assoc($result);
 }
 
 if (isset($_REQUEST['key'])) {

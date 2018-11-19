@@ -1,4 +1,4 @@
-import Emergency from './Emergency.js';
+import AnimatedMarker from './AnimatedMarker.js';
 import LightManagement from './LightManagement.js';
 import EventManagement from './EventManagement.js';
 
@@ -20,15 +20,19 @@ import EventManagement from './EventManagement.js';
   });
 
   // 緊急事件
-  let emergency = new Emergency(map);
+  let emergency = new AnimatedMarker(map, 'url(src/siren.png)');
+
+  // Demo
+  let demo = new AnimatedMarker(map, 'url(src/direction.png)');
 
   // 紅綠燈
   let lightManagement = new LightManagement(map);
   setInterval(() => lightManagement.tick(), 1000);
 
   // 一般事件
-  new EventManagement(map);
+  let eventManagement = new EventManagement(map);
 
+  // 每秒鐘取的一次更新資訊，location, demo_location, event
   let key = 0;
   let xmlHttp = window.XMLHttpRequest ? new XMLHttpRequest() : ActiveXObject("Microsoft.XMLHTTP");
   xmlHttp.onreadystatechange = function () {
@@ -36,9 +40,11 @@ import EventManagement from './EventManagement.js';
       let data = JSON.parse(this.responseText);
       if (data.key != undefined) {
         key = data.key;
+        eventManagement.setEvents(data.events);
       }
 
-      emergency.setEmergency(data.location);
+      emergency.setLocation(data.location);
+      demo.setLocation(data.demo_location);
     };
   }
 

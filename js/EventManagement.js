@@ -1,28 +1,21 @@
 class EventManagement {
   constructor(map) {
-    let self = this;
-
-    self.map = map;
-
-    // AJAX
-    let xmlHttp = window.XMLHttpRequest ? new XMLHttpRequest() : ActiveXObject("Microsoft.XMLHTTP");
-    xmlHttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        self.events = JSON.parse(this.responseText);
-        self.initEvents();
-      }
-    };
-
-    xmlHttp.open('GET', 'php/getEvents.php', true);
-    xmlHttp.send();
+    this.map = map;
+    this.event_ovl_s = [];
   }
 
   // 初始化所有事件
-  initEvents() {
-    let event_ovl_s = [];
+  setEvents(events) {
+    if (this.event_ovl_s.length != 0) {
+      for (const event_ovl of this.event_ovl_s) {
+        this.map.removeOverlay(event_ovl);
+      }
+      this.event_ovl_s.length = 0;
+    }
+
     let category = ['道路施工', '道路封鎖', '車禍事故', '警察路檢', '掉落物', '其他事件'];
     let icon = ['repair', 'roadblock', 'accident', 'police', 'drop', 'others'];
-    for (const event of this.events) {
+    for (const event of events) {
       // event's div
       let event_div = document.createElement('div');
       event_div.id = 'event';
@@ -56,10 +49,11 @@ class EventManagement {
         positioning: 'bottom-center',
         offset: [0, -20],
         element: infoWindow_div,
+        insertFirst: false,
         stopEvent: true
       });
 
-      event_ovl_s.push(event_ovl);
+      this.event_ovl_s.push(event_ovl);
       this.map.addOverlay(infoWindow_ovl);
 
       closer.onclick = () => {
@@ -72,7 +66,7 @@ class EventManagement {
       };
     }
 
-    for (const event_ovl of event_ovl_s) {
+    for (const event_ovl of this.event_ovl_s) {
       this.map.addOverlay(event_ovl);
     }
   }
